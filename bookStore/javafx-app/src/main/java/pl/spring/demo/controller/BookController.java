@@ -7,8 +7,6 @@ import java.util.ResourceBundle;
 
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -25,7 +23,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import pl.spring.demo.dataprovider.DataProvider;
 import pl.spring.demo.enumerations.BookStatus;
@@ -159,62 +156,32 @@ public class BookController {
 		statusAllColumn
 				.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getStatus().toString()));
 
-		resultAllTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<BookTo>() {
-
+		ContextMenu contextMenu = new ContextMenu();
+		MenuItem edit = new MenuItem("Edit");
+		MenuItem delete = new MenuItem("Delete");
+		delete.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
-			public void changed(ObservableValue<? extends BookTo> observable, BookTo oldValue, BookTo newValue) {
-				if (newValue != null) {
-					Task<Void> backgroundTask = new Task<Void>() {
-
-						@Override
-						protected Void call() throws Exception {
-							System.out.println(newValue.getTitle());
-							resultAllTable.setOnMousePressed(new EventHandler<MouseEvent>() {
-								@Override
-								public void handle(MouseEvent event) {
-									if (event.isSecondaryButtonDown()) {
-										ContextMenu contextMenu = new ContextMenu();
-										MenuItem edit = new MenuItem("Edit");
-										MenuItem delete = new MenuItem("Delete");
-										delete.setOnAction(new EventHandler<ActionEvent>() {
-											@Override
-											public void handle(ActionEvent event) {
-												dataProvider.deleteBook(newValue);
-												showAllBooks();
-												System.out.println(newValue.getTitle());
-											}
-										});
-										edit.setOnAction(new EventHandler<ActionEvent>() {
-											@Override
-											public void handle(ActionEvent event) {
-												editPane.setVisible(true);
-												titleEditField.setText(newValue.getTitle());
-												authorEditField.setText(newValue.getAuthors());
-												statusEditField.getSelectionModel()
-														.select(bookStatus2Status(newValue.getStatus()));
-												tempBook = newValue;
-												System.out.println(newValue.getTitle());
-											}
-										});
-										contextMenu.getItems().addAll(edit, delete);
-										resultAllTable.setContextMenu(contextMenu);
-										// contextMenu.show(resultAllTable,
-										// event.getScreenX(),
-										// event.getScreenY());
-									}
-								}
-							});
-							return null;
-						}
-
-						@Override
-						protected void failed() {
-						}
-					};
-					new Thread(backgroundTask).start();
-				}
+			public void handle(ActionEvent event) {
+				dataProvider.deleteBook(resultAllTable.getSelectionModel().getSelectedItem());
+				showAllBooks();
+				System.out.println(resultAllTable.getSelectionModel().getSelectedItem().getTitle());
+				editPane.setVisible(false);
 			}
 		});
+		edit.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				editPane.setVisible(true);
+				titleEditField.setText(resultAllTable.getSelectionModel().getSelectedItem().getTitle());
+				authorEditField.setText(resultAllTable.getSelectionModel().getSelectedItem().getAuthors());
+				statusEditField.getSelectionModel()
+						.select(bookStatus2Status(resultAllTable.getSelectionModel().getSelectedItem().getStatus()));
+				tempBook = resultAllTable.getSelectionModel().getSelectedItem();
+				System.out.println(resultAllTable.getSelectionModel().getSelectedItem().getTitle());
+			}
+		});
+		contextMenu.getItems().addAll(edit, delete);
+		resultAllTable.setContextMenu(contextMenu);
 
 	}
 
