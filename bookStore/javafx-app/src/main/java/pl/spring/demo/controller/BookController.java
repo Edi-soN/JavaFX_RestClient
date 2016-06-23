@@ -132,13 +132,16 @@ public class BookController {
 		statusAddField.valueProperty().bindBidirectional(allModel.statusProperty());
 		statusAddField.getSelectionModel().selectFirst();
 
+		// REV: wypelnienie modelu musi byc robione po ustawieniu wszystkich bindow
 		showAllBooks();
 
+		// REV: wykomentowany kod poiwnien byc ususniety
 		// addButton.disableProperty().bind(authorAddField.textProperty().isEmpty());
 		// addButton.disableProperty().bind(titleAddField.textProperty().isEmpty());
 		BooleanBinding booleanBind = authorAddField.textProperty().isEmpty().or(titleAddField.textProperty().isEmpty());
 		addButton.disableProperty().bind(booleanBind);
 
+		// REV: lepiej zaladowac obrazek z lokalnego pliku
 		searchButton.setGraphic(new ImageView(new Image("http://gmapsapi.com/examples/018/lupa.png")));
 
 		editPane.setVisible(false);
@@ -157,13 +160,16 @@ public class BookController {
 				.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getStatus().toString()));
 
 		ContextMenu contextMenu = new ContextMenu();
+		// REV: teksty powinny byc pobrane z bundla
 		MenuItem edit = new MenuItem("Edit");
 		MenuItem delete = new MenuItem("Delete");
 		delete.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				// REV: ta operacja powinna byc wykonana w watku w tle
 				dataProvider.deleteBook(resultAllTable.getSelectionModel().getSelectedItem());
 				showAllBooks();
+				// REV: zawsze uzywaj loggera
 				System.out.println(resultAllTable.getSelectionModel().getSelectedItem().getTitle());
 				editPane.setVisible(false);
 			}
@@ -177,6 +183,7 @@ public class BookController {
 				statusEditField.getSelectionModel()
 						.select(bookStatus2Status(resultAllTable.getSelectionModel().getSelectedItem().getStatus()));
 				tempBook = resultAllTable.getSelectionModel().getSelectedItem();
+				// REV: zawsze uzywaj loggera
 				System.out.println(resultAllTable.getSelectionModel().getSelectedItem().getTitle());
 			}
 		});
@@ -186,6 +193,7 @@ public class BookController {
 	}
 
 	private void initStatusList() {
+		// REV: jesli dodasz nowy status do enuma to musisz go tutaj dodac recznie
 		statusAddField.getItems().add(Status.FREE);
 		statusAddField.getItems().add(Status.LOAN);
 		statusAddField.getItems().add(Status.MISSING);
@@ -259,7 +267,7 @@ public class BookController {
 	}
 
 	private void findBookButtonAction() {
-
+		// REV: konfiguracja kontrolek powinna byc zrobiona w metodzie initialize()
 		titleSearchColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getTitle()));
 		authorSearchColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getAuthors()));
 		statusSearchColumn
@@ -286,6 +294,7 @@ public class BookController {
 				resultSearchTable.getSortOrder().clear();
 
 				Alert alert = new Alert(AlertType.INFORMATION);
+				// REV: teksty powinny byc pobrane z bundla
 				alert.setTitle("Status");
 				alert.setContentText("No books found");
 				alert.show();
@@ -332,6 +341,7 @@ public class BookController {
 
 			@Override
 			protected void failed() {
+				// REV: lepiej pokazac alert
 				addBookInfo.setText("Info : failed to add book");
 			}
 		};
@@ -351,6 +361,7 @@ public class BookController {
 	private BookStatus status2BookStatus(Status status) {
 		BookStatus bookStatus = null;
 
+		// REV: nie polecam konwersji przez toString(), zobacz jak to jest zrobione w przykladowym projekcie
 		if (BookStatus.FREE.toString().equals(status.toString())) {
 			bookStatus = BookStatus.FREE;
 		}
@@ -367,6 +378,7 @@ public class BookController {
 	private Status bookStatus2Status(BookStatus bookStatus) {
 		Status status = null;
 
+		// REV: j.w.
 		if (Status.FREE.toString().equals(bookStatus.toString())) {
 			status = Status.FREE;
 		}

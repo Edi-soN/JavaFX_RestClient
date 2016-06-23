@@ -10,11 +10,13 @@
    <children>
       <Label alignment="CENTER" contentDisplay="CENTER" layoutX="253.0" layoutY="12.0" prefHeight="43.0" prefWidth="261.0" text="Book Shop">
          <font>
+         	<!-- REV: lepiej zrobic to w CSSie -->
             <Font name="System Bold" size="29.0" />
          </font>
       </Label>
       <TabPane layoutX="13.0" layoutY="71.0" prefHeight="520.0" prefWidth="744.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
+        	<!-- REV: teksty z bundla -->
           <Tab text="Show Books">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">

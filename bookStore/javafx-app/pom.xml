@@ -20,6 +20,7 @@
 			<artifactId>unirest-java</artifactId>
 			<version>1.4.9</version>
 		</dependency>
+		<!-- REV: te zaleznosci sa automatycznie dodawane przez Mavena, tzw. zaleznosci tranzytywne -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
@@ -40,6 +41,8 @@
 			<artifactId>json</artifactId>
 			<version>20140107</version>
 		</dependency>
+		
+		<!-- REV: brakuje zaleznosci do Jackson (miales szczescie, ze inna biblioteka go dociaga) -->
 	</dependencies>
 
 
